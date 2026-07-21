@@ -193,7 +193,7 @@ button{cursor:pointer; border:none; background:none; color:inherit;}
   font-size:11px; background:var(--cc); color:#fff; border-radius:7px; padding:2px 4px;
   display:flex; align-items:center; gap:3px; cursor:pointer; line-height:1.3; word-break:keep-all;
 }
-.chip:hover::after{content:'✕'; margin-left:auto; font-size:9px;}
+#calendar .chip:hover::after{content:'✕'; margin-left:auto; font-size:9px;}
 .cal-tip{font-size:12px; color:#5b8194; margin-top:8px;}
 
 /* ---------- 도전 모달 ---------- */
@@ -250,6 +250,14 @@ button{cursor:pointer; border:none; background:none; color:inherit;}
   box-shadow:0 12px 40px rgba(29,78,99,.25); display:flex; flex-direction:column; gap:16px;
 }
 #done-capture h1{font-size:clamp(24px,5vw,34px); text-align:center;}
+.done-sub{text-align:center; font-size:14px; color:#5b8194; margin-top:-8px;}
+.done-cal{background:#F6FBFD; border-radius:16px; padding:12px;}
+.done-cal .day{min-height:60px; background:#fff; cursor:default;}
+.isle-box{
+  background:#fff; border-radius:24px; padding:18px; max-width:860px; width:100%;
+  box-shadow:0 12px 40px rgba(29,78,99,.25);
+}
+.isle-box h3{font-size:18px; margin-bottom:10px;}
 #done-island{
   position:relative; width:100%; aspect-ratio:16/10; border-radius:18px; overflow:hidden;
   background:linear-gradient(180deg,#BFEAF5 0%,#8FDCEA 38%,var(--ocean) 55%,var(--ocean-deep) 100%);
@@ -298,7 +306,7 @@ button{cursor:pointer; border:none; background:none; color:inherit;}
   <h1>🏝️ 버킷섬</h1>
   <div class="isle">🏝️</div>
   <p class="desc">섬 곳곳의 <b>도전 과제</b>를 해결하고 여름 활동 카드를 모아<br>
-  나만의 <b>방학 달력</b>을 완성해 보세요! 계획을 세워 섬을 가꿔요. ✨</p>
+  나만의 <b>방학 달력</b>을 완성해 보세요! 계획을 세워 섬을 꾸며요. ✨</p>
   <div class="setup-box">
     <div class="setup-row">
       <label>👤 탐험가 이름</label>
@@ -376,19 +384,26 @@ button{cursor:pointer; border:none; background:none; color:inherit;}
 <!-- ============ 완료 화면 ============ -->
 <section id="screen-done" class="hidden">
   <div id="done-capture">
-    <h1>🎉 <span id="done-name"></span>의 여름방학 준비 완료!</h1>
+    <h1>📅 <span id="done-name"></span>의 여름방학 계획표</h1>
+    <div class="done-sub" id="done-range"></div>
     <div class="grade-box" id="grade-box"></div>
-    <div id="done-island"></div>
+    <div class="done-cal">
+      <div class="cal-grid" id="done-cal-grid"></div>
+    </div>
     <div class="done-grid">
       <div class="done-box">
         <h3>📊 나의 활동 통계</h3>
         <div id="done-stats"></div>
       </div>
       <div class="done-box">
-        <h3>🗓️ 나의 방학 계획</h3>
+        <h3>🗓️ 날짜별 계획</h3>
         <div class="done-list" id="done-list"></div>
       </div>
     </div>
+  </div>
+  <div class="isle-box no-print">
+    <h3>🏝️ 내가 키운 버킷섬</h3>
+    <div id="done-island"></div>
   </div>
   <div class="done-actions">
     <button class="btn-main" id="btn-png">🖼️ PNG 저장</button>
@@ -865,6 +880,32 @@ function gradePlan(){
 function finish(){
   if(placedCount()===0){ toast('먼저 카드를 달력에 배치해 보세요! 📅'); switchTab('calendar'); return; }
   $('#done-name').textContent = state.name;
+  const s0 = state.calStart, e0 = state.calEnd;
+  $('#done-range').textContent =
+    `${s0.getFullYear()}년 ${s0.getMonth()+1}월 ${s0.getDate()}일 ~ ${e0.getMonth()+1}월 ${e0.getDate()}일`;
+  // 계획표 달력 (읽기 전용)
+  const dg = $('#done-cal-grid'); dg.innerHTML='';
+  ['일','월','화','수','목','금','토'].forEach(w=>{
+    const s=document.createElement('div'); s.className='wd'; s.textContent=w; dg.appendChild(s);
+  });
+  for(let i=0;i<s0.getDay();i++){
+    const b=document.createElement('div'); b.className='day blank'; dg.appendChild(b);
+  }
+  for(let d=new Date(s0); d<=e0; d.setDate(d.getDate()+1)){
+    const date=new Date(d), key=dkey(date);
+    const cell=document.createElement('div');
+    cell.className='day'+(date.getMonth()%2?' m8':'');
+    cell.innerHTML=`<span class="dn">${date.getMonth()+1}/${date.getDate()}</span>`;
+    (state.placed[key]||[]).forEach(id=>{
+      const c=cardById(id);
+      const chip=document.createElement('span');
+      chip.className='chip '+CATS[c.cat].cls;
+      chip.style.cursor='default';
+      chip.textContent=`${c.emoji} ${c.name}`;
+      cell.appendChild(chip);
+    });
+    dg.appendChild(cell);
+  }
   // 등급
   const g = gradePlan();
   $('#grade-box').innerHTML = `
@@ -926,7 +967,7 @@ $('#btn-png').addEventListener('click', async ()=>{
   try{
     const canvas = await html2canvas($('#done-capture'), {scale:2, backgroundColor:'#ffffff', useCORS:true});
     const a = document.createElement('a');
-    a.download = `${state.name}의_버킷섬_방학계획.png`;
+    a.download = `${state.name}의_여름방학_계획표.png`;
     a.href = canvas.toDataURL('image/png');
     a.click();
     toast('이미지를 저장했어요! 🖼️', true);
