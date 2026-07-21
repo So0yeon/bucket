@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>여름방학 어드벤처 : 버킷섬</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{
+  --ocean:#4EC3D6; --ocean-deep:#2A9DB5; --sky:#CDEFF7;
+  --sand:#F9E9BD; --sand-deep:#EFCF8E; --leaf:#4FB06D;
+  --coral:#FF7B54; --sun:#FFD166; --ink:#1D4E63; --paper:#FFFFFF;
+  --learn:#7C6FF0; --health:#43A6E8; --hobby:#F06FA8; --family:#FF9B42; --nature:#4FB06D; --share:#E85D75;
+}
+*{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  font-family:'Noto Sans KR',sans-serif; color:var(--ink);
+  background:linear-gradient(180deg,var(--sky) 0%,#A5E2EF 45%,var(--ocean) 100%);
+  min-height:100vh; overflow-x:hidden;
+}
+h1,h2,h3,.jua,button{font-family:'Jua',sans-serif;}
+button{cursor:pointer; border:none; background:none; color:inherit;}
+.hidden{display:none !important;}
+
+.cat-learn{--cc:var(--learn);} .cat-health{--cc:var(--health);} .cat-hobby{--cc:var(--hobby);}
+.cat-family{--cc:var(--family);} .cat-nature{--cc:var(--nature);} .cat-share{--cc:var(--share);}
+
+/* ---------- 시작 화면 ---------- */
+#screen-start{
+  min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:24px; position:relative; overflow:hidden;
+}
+.start-waves{position:absolute; bottom:-10px; left:0; width:100%; opacity:.8;}
+.start-badge{font-size:15px; letter-spacing:4px; background:rgba(255,255,255,.7); padding:6px 18px; border-radius:99px; margin-bottom:14px;}
+#screen-start h1{font-size:clamp(36px,8vw,60px); text-shadow:0 4px 0 rgba(255,255,255,.6);}
+#screen-start .isle{font-size:clamp(60px,13vw,100px); margin:6px 0 2px; animation:bob 3s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+#screen-start p.desc{margin:8px 0 18px; font-size:16px; line-height:1.6; max-width:440px;}
+.setup-box{
+  background:#fff; padding:18px; border-radius:22px; box-shadow:0 8px 24px rgba(29,78,99,.18);
+  display:flex; flex-direction:column; gap:12px; z-index:2; width:min(400px,92vw);
+}
+.setup-row{display:flex; flex-direction:column; gap:5px; text-align:left;}
+.setup-row label{font-family:'Jua'; font-size:15px;}
+.setup-row input{
+  border:none; outline:none; font-size:16px; font-family:'Noto Sans KR'; padding:10px 14px;
+  border-radius:12px; background:#F2FAFC; color:var(--ink); width:100%;
+}
+.setup-dates{display:flex; gap:10px;}
+.setup-dates .setup-row{flex:1;}
+.setup-note{font-size:12px; color:#5b8194; text-align:left;}
+.btn-main{
+  background:var(--coral); color:#fff; font-size:19px; padding:12px 26px; border-radius:14px;
+  box-shadow:0 4px 0 #D95F3C; transition:transform .1s;
+}
+.btn-main:active{transform:translateY(3px); box-shadow:0 1px 0 #D95F3C;}
+.btn-main:disabled{opacity:.5; cursor:not-allowed;}
+.btn-sub{
+  background:#fff; color:var(--ink); font-size:16px; padding:10px 20px; border-radius:12px;
+  box-shadow:0 3px 0 rgba(29,78,99,.25);
+}
+.btn-sub:active{transform:translateY(2px); box-shadow:0 1px 0 rgba(29,78,99,.25);}
+
+/* ---------- 메인 레이아웃 ---------- */
+#screen-main{min-height:100vh; display:flex; flex-direction:column;}
+#topbar{
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  padding:10px 14px; background:rgba(255,255,255,.85); backdrop-filter:blur(6px);
+  position:sticky; top:0; z-index:40; box-shadow:0 2px 10px rgba(29,78,99,.1);
+}
+#topbar .title{font-family:'Jua'; font-size:19px; margin-right:auto;}
+.stat{
+  display:flex; align-items:center; gap:5px; background:#F2FAFC; border-radius:99px;
+  padding:5px 12px; font-size:14px; font-weight:700;
+}
+.stat small{font-weight:400; color:#5b8194;}
+#main-body{flex:1; display:flex; flex-direction:column;}
+
+#tabbar{
+  position:sticky; bottom:0; z-index:40; display:flex; gap:8px; padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+  background:rgba(255,255,255,.92); backdrop-filter:blur(6px); box-shadow:0 -2px 10px rgba(29,78,99,.12);
+}
+#tabbar button{
+  flex:1; font-size:16px; padding:11px 4px; border-radius:14px; background:#F2FAFC; color:#5b8194;
+  transition:all .15s;
+}
+#tabbar button.active{background:var(--ink); color:#fff;}
+#tabbar button#tab-done{background:var(--sun); color:var(--ink);}
+
+/* ---------- 섬 화면 ---------- */
+#view-island{padding:14px; display:flex; flex-direction:column; gap:12px; max-width:980px; width:100%; margin:0 auto;}
+.hint{
+  background:rgba(255,255,255,.85); border-radius:14px; padding:10px 14px; font-size:14px; line-height:1.5;
+  box-shadow:0 3px 10px rgba(29,78,99,.08);
+}
+#island-scene{
+  position:relative; width:100%; aspect-ratio:16/11; max-height:560px;
+  border-radius:24px; overflow:hidden; box-shadow:0 10px 30px rgba(29,78,99,.22);
+  background:linear-gradient(180deg,#BFEAF5 0%,#8FDCEA 38%,var(--ocean) 55%,var(--ocean-deep) 100%);
+}
+#island-scene .sun{position:absolute; top:5%; right:7%; font-size:clamp(30px,5vw,48px); animation:spin 24s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+#island-scene .cloud{position:absolute; font-size:clamp(22px,4vw,36px); opacity:.9; animation:drift linear infinite;}
+@keyframes drift{from{transform:translateX(-15vw)}to{transform:translateX(115vw)}}
+.island-land{
+  position:absolute; left:8%; right:8%; top:34%; bottom:6%;
+  background:radial-gradient(ellipse at 50% 30%, #6FCB8A 0%, var(--leaf) 45%, var(--sand) 72%, var(--sand-deep) 100%);
+  border-radius:48% 52% 46% 54% / 60% 58% 42% 40%;
+  box-shadow:inset 0 -14px 0 rgba(0,0,0,.06), 0 10px 0 rgba(19,110,130,.35);
+}
+.spot{
+  position:absolute; transform:translate(-50%,-50%);
+  display:flex; flex-direction:column; align-items:center; gap:2px; z-index:5;
+  transition:transform .15s;
+}
+.spot:hover{transform:translate(-50%,-56%) scale(1.08);}
+.spot .em{
+  font-size:clamp(26px,4.6vw,44px); filter:drop-shadow(0 3px 3px rgba(0,0,0,.25));
+  animation:bob 2.6s ease-in-out infinite;
+}
+.spot .tag{
+  font-size:clamp(10px,1.6vw,13px); font-family:'Jua'; background:rgba(255,255,255,.9);
+  padding:2px 8px; border-radius:99px; box-shadow:0 2px 4px rgba(29,78,99,.15); white-space:nowrap;
+}
+.spot .cnt{
+  position:absolute; top:-6px; right:-10px; background:var(--coral); color:#fff; font-size:11px;
+  font-weight:700; border-radius:99px; padding:1px 6px; box-shadow:0 2px 4px rgba(0,0,0,.2);
+}
+.spot.done{opacity:.55;}
+.spot.done .em{animation:none;}
+.spot.done .cnt{background:var(--leaf);}
+.deco{
+  position:absolute; transform:translate(-50%,-50%); font-size:clamp(20px,3.6vw,36px);
+  filter:drop-shadow(0 2px 2px rgba(0,0,0,.2)); z-index:3; pointer-events:none;
+}
+.deco.new{animation:pop .6s cubic-bezier(.2,1.6,.4,1);}
+@keyframes pop{0%{transform:translate(-50%,-50%) scale(0)}100%{transform:translate(-50%,-50%) scale(1)}}
+.deco.fly{animation:fly 7s ease-in-out infinite;}
+@keyframes fly{0%,100%{margin-top:0}50%{margin-top:-16px}}
+.deco.swim{animation:swim 9s ease-in-out infinite;}
+@keyframes swim{0%,100%{margin-left:0}50%{margin-left:40px}}
+.stage-banner{
+  position:absolute; left:12px; top:12px; z-index:6; background:rgba(255,255,255,.9);
+  border-radius:12px; padding:6px 12px; font-family:'Jua'; font-size:14px; box-shadow:0 3px 8px rgba(29,78,99,.15);
+}
+.stage-banner .bar{width:120px; height:8px; background:#E3F2F7; border-radius:99px; margin-top:4px; overflow:hidden;}
+.stage-banner .bar i{display:block; height:100%; background:linear-gradient(90deg,var(--sun),var(--coral)); border-radius:99px; transition:width .5s;}
+
+/* ---------- 카드 트레이 ---------- */
+.tray{
+  background:rgba(255,255,255,.9); border-radius:18px; padding:12px; box-shadow:0 4px 14px rgba(29,78,99,.12);
+}
+.tray h3{font-size:16px; margin-bottom:8px; display:flex; align-items:center; gap:6px;}
+.tray h3 .n{background:var(--sun); border-radius:99px; padding:0 10px; font-size:13px;}
+.tray-cards{display:flex; gap:8px; overflow-x:auto; padding-bottom:6px;}
+.card{
+  flex:0 0 auto; width:86px; border-radius:14px; background:#fff; border:3px solid var(--cc,#ccc);
+  padding:8px 4px 6px; text-align:center; user-select:none; cursor:grab; position:relative;
+  box-shadow:0 3px 8px rgba(29,78,99,.12); transition:transform .12s;
+}
+.card:active{cursor:grabbing;}
+.card .em{font-size:28px;}
+.card .nm{font-size:12px; font-weight:700; line-height:1.25; margin-top:3px; word-break:keep-all;}
+.card .ct{font-size:10px; color:#fff; background:var(--cc); border-radius:99px; padding:1px 7px; display:inline-block; margin-top:4px;}
+.card.selected{transform:translateY(-6px) scale(1.05); box-shadow:0 0 0 3px var(--sun), 0 8px 16px rgba(29,78,99,.25);}
+.tray-empty{font-size:13px; color:#5b8194; padding:8px 2px;}
+
+/* ---------- 달력 화면 ---------- */
+#view-calendar{padding:14px; max-width:1080px; width:100%; margin:0 auto; display:grid; gap:12px; grid-template-columns:280px 1fr; align-items:start;}
+@media (max-width:820px){#view-calendar{grid-template-columns:1fr;}}
+#cal-tray .tray-cards{flex-wrap:wrap; overflow:visible; max-height:420px; overflow-y:auto;}
+@media (max-width:820px){#cal-tray .tray-cards{flex-wrap:nowrap; overflow-x:auto; max-height:none;}}
+#calendar{
+  background:rgba(255,255,255,.94); border-radius:20px; padding:14px; box-shadow:0 6px 20px rgba(29,78,99,.15);
+}
+#calendar h2{font-size:20px; margin-bottom:4px;}
+#calendar .sub{font-size:13px; color:#5b8194; margin-bottom:10px;}
+.cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:5px;}
+.cal-grid .wd{font-family:'Jua'; text-align:center; font-size:13px; padding:4px 0; color:#5b8194;}
+.cal-grid .wd:first-child{color:var(--coral);} .cal-grid .wd:last-child{color:var(--health);}
+.day{
+  min-height:72px; border-radius:10px; background:#F4FAFC; border:2px dashed transparent;
+  padding:3px; display:flex; flex-direction:column; gap:2px; position:relative; transition:all .12s;
+}
+.day.blank{background:transparent;}
+.day .dn{font-size:11px; font-weight:700; color:#5b8194; padding:1px 3px;}
+.day.m8 .dn{color:#B08430;}
+.day.droptarget{border-color:var(--coral); background:#FFF3EC;}
+.day.can-place{cursor:pointer; border-color:#BFE3EE;}
+.chip{
+  font-size:11px; background:var(--cc); color:#fff; border-radius:7px; padding:2px 4px;
+  display:flex; align-items:center; gap:3px; cursor:pointer; line-height:1.3; word-break:keep-all;
+}
+.chip:hover::after{content:'✕'; margin-left:auto; font-size:9px;}
+.cal-tip{font-size:12px; color:#5b8194; margin-top:8px;}
+
+/* ---------- 도전 모달 ---------- */
+#modal-bg{
+  position:fixed; inset:0; background:rgba(20,60,80,.55); z-index:80;
+  display:flex; align-items:center; justify-content:center; padding:16px;
+}
+.modal{
+  background:#fff; border-radius:24px; padding:24px 22px; text-align:center; max-width:380px; width:100%;
+  animation:pop2 .4s cubic-bezier(.2,1.6,.4,1); box-shadow:0 20px 60px rgba(0,0,0,.3);
+}
+@keyframes pop2{0%{transform:scale(.6); opacity:0}100%{transform:scale(1); opacity:1}}
+.modal .place{font-size:13px; color:#5b8194; margin-bottom:4px;}
+.modal .big{font-size:60px; margin:6px 0;}
+.modal h3{font-size:22px; line-height:1.35; word-break:keep-all;}
+.modal .ct{font-size:12px; color:#fff; background:var(--cc); border-radius:99px; padding:3px 12px; display:inline-block; margin:8px 0 14px;}
+.ch-type{font-family:'Jua'; font-size:13px; color:#fff; background:var(--ink); border-radius:99px; padding:3px 14px; display:inline-block; margin-bottom:10px;}
+.ch-q{font-size:18px; font-family:'Jua'; line-height:1.45; margin:6px 0 16px; word-break:keep-all;}
+.ch-opts{display:flex; flex-direction:column; gap:8px;}
+.ch-opts.row{flex-direction:row;}
+.ch-opt{
+  background:#F2FAFC; border:2px solid #DCEEF4; border-radius:14px; padding:12px 10px;
+  font-size:16px; font-family:'Jua'; transition:all .12s; flex:1;
+}
+.ch-opt:hover{border-color:var(--ocean);}
+.ch-opt.wrong{background:#FFE3E0; border-color:#F09085; animation:shake .35s;}
+.ch-opt.right{background:#DFF6E4; border-color:var(--leaf);}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.ch-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:6px 0 4px;}
+.ch-grid button{
+  font-size:30px; background:#F2FAFC; border-radius:12px; padding:8px 0; border:2px solid #DCEEF4;
+  transition:transform .1s;
+}
+.ch-grid button:hover{transform:scale(1.08);}
+.ch-grid button.wrong{animation:shake .35s; background:#FFE3E0;}
+.ch-feedback{font-size:14px; min-height:22px; margin-top:10px; font-weight:700;}
+.ch-feedback.bad{color:#E05B4B;}
+.ch-feedback.good{color:var(--leaf);}
+
+/* ---------- 토스트 ---------- */
+#toast-wrap{position:fixed; top:64px; left:0; right:0; z-index:90; display:flex; flex-direction:column; align-items:center; gap:8px; pointer-events:none;}
+.toast{
+  background:var(--ink); color:#fff; font-family:'Jua'; font-size:15px; padding:10px 20px;
+  border-radius:99px; box-shadow:0 6px 20px rgba(0,0,0,.25); animation:toastIn .4s cubic-bezier(.2,1.4,.4,1);
+  max-width:90vw; text-align:center;
+}
+.toast.gold{background:linear-gradient(90deg,#F5A623,var(--coral));}
+@keyframes toastIn{from{transform:translateY(-20px); opacity:0}to{transform:translateY(0); opacity:1}}
+
+/* ---------- 완료 화면 ---------- */
+#screen-done{min-height:100vh; padding:20px 14px 40px; display:flex; flex-direction:column; align-items:center; gap:16px;}
+#done-capture{
+  background:#fff; border-radius:24px; padding:22px; max-width:860px; width:100%;
+  box-shadow:0 12px 40px rgba(29,78,99,.25); display:flex; flex-direction:column; gap:16px;
+}
+#done-capture h1{font-size:clamp(24px,5vw,34px); text-align:center;}
+#done-island{
+  position:relative; width:100%; aspect-ratio:16/10; border-radius:18px; overflow:hidden;
+  background:linear-gradient(180deg,#BFEAF5 0%,#8FDCEA 38%,var(--ocean) 55%,var(--ocean-deep) 100%);
+}
+.grade-box{
+  text-align:center; background:linear-gradient(135deg,#FFF6DE,#FFE9D6); border-radius:18px; padding:18px 14px;
+  border:3px solid var(--sun);
+}
+.grade-box .gr{font-size:clamp(28px,6vw,42px); font-family:'Jua';}
+.grade-box .sc{font-size:16px; font-family:'Jua'; margin-top:2px;}
+.grade-box .cm{font-size:14px; margin-top:8px; line-height:1.5; word-break:keep-all;}
+.grade-detail{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:12px;}
+.grade-pill{background:#fff; border-radius:12px; padding:8px 14px; font-size:13px; box-shadow:0 2px 6px rgba(29,78,99,.1);}
+.grade-pill b{font-family:'Jua'; color:var(--coral);}
+.done-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+@media (max-width:680px){.done-grid{grid-template-columns:1fr;}}
+.done-box{background:#F6FBFD; border-radius:16px; padding:14px;}
+.done-box h3{font-size:17px; margin-bottom:10px;}
+.statbar{display:flex; align-items:center; gap:8px; margin-bottom:7px; font-size:13px;}
+.statbar .lb{width:88px; font-weight:700;}
+.statbar .tr{flex:1; height:12px; background:#E3EFF4; border-radius:99px; overflow:hidden;}
+.statbar .tr i{display:block; height:100%; background:var(--cc); border-radius:99px;}
+.statbar .vl{width:26px; text-align:right; font-weight:700;}
+.done-list{font-size:13px; line-height:1.7; max-height:260px; overflow-y:auto;}
+.done-list b{font-family:'Jua'; color:var(--coral);}
+.done-actions{display:flex; gap:10px; flex-wrap:wrap; justify-content:center;}
+.confetti{position:fixed; top:-40px; font-size:24px; z-index:100; animation:fall linear forwards; pointer-events:none;}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg); opacity:.6;}}
+
+@media print{
+  body{background:#fff;}
+  #screen-start,#screen-main,#toast-wrap,.done-actions,.no-print{display:none !important;}
+  #screen-done{padding:0;}
+  #done-capture{box-shadow:none; max-width:100%;}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important; transition:none !important;}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ 시작 화면 ============ -->
+<section id="screen-start">
+  <div class="start-badge">여름방학 어드벤처</div>
+  <h1>🏝️ 버킷섬</h1>
+  <div class="isle">🏝️</div>
+  <p class="desc">섬 곳곳의 <b>도전 과제</b>를 해결하고 여름 활동 카드를 모아<br>
+  나만의 <b>방학 달력</b>을 완성해 보세요! 계획을 세울수록 섬이 자라나요. ✨</p>
+  <div class="setup-box">
+    <div class="setup-row">
+      <label>👤 탐험가 이름</label>
+      <input id="inp-name" type="text" maxlength="8" placeholder="이름을 입력하세요" autocomplete="off">
+    </div>
+    <div class="setup-dates">
+      <div class="setup-row">
+        <label>🏫 방학식 날짜</label>
+        <input id="inp-start" type="date" value="2026-07-25">
+      </div>
+      <div class="setup-row">
+        <label>🎒 개학식 날짜</label>
+        <input id="inp-end" type="date" value="2026-08-24">
+      </div>
+    </div>
+    <div class="setup-note">💡 우리 학교의 방학식·개학식 날짜를 넣어 주세요. 달력은 방학식부터 개학식 전날까지 만들어져요.</div>
+    <button class="btn-main" id="btn-start">모험 시작! 🚀</button>
+  </div>
+  <svg class="start-waves" viewBox="0 0 1440 120" preserveAspectRatio="none" height="90">
+    <path d="M0,60 C240,110 480,10 720,60 C960,110 1200,10 1440,60 L1440,120 L0,120 Z" fill="rgba(255,255,255,.35)"/>
+    <path d="M0,80 C240,120 480,40 720,80 C960,120 1200,40 1440,80 L1440,120 L0,120 Z" fill="rgba(255,255,255,.5)"/>
+  </svg>
+</section>
+
+<!-- ============ 메인 화면 ============ -->
+<section id="screen-main" class="hidden">
+  <header id="topbar">
+    <span class="title" id="tb-title">버킷섬</span>
+    <span class="stat">🪙 <span id="st-found">0</span><small>/45 획득</small></span>
+    <span class="stat">📅 <span id="st-placed">0</span><small>개 계획</small></span>
+    <span class="stat">❤️ <span id="st-div">0</span><small>/6 다양성</small></span>
+  </header>
+
+  <div id="main-body">
+    <div id="view-island">
+      <div class="hint">🔎 섬 곳곳을 눌러 <b>도전 과제</b>를 해결하면 활동 카드를 얻어요! 장소마다 카드가 5장씩 숨어 있어요.</div>
+      <div id="island-scene">
+        <div class="sun">☀️</div>
+        <div class="cloud" style="top:8%; animation-duration:40s;">☁️</div>
+        <div class="cloud" style="top:16%; animation-duration:55s; animation-delay:-20s;">🌥️</div>
+        <div class="island-land"></div>
+        <div class="stage-banner">🏝️ <span id="stage-name">무인도</span>
+          <div class="bar"><i id="stage-bar" style="width:0%"></i></div>
+        </div>
+        <div id="deco-layer"></div>
+        <div id="spot-layer"></div>
+      </div>
+      <div class="tray">
+        <h3>🎒 내 카드 가방 <span class="n" id="tray-n">0장</span></h3>
+        <div class="tray-cards" id="tray-island"></div>
+      </div>
+    </div>
+
+    <div id="view-calendar" class="hidden">
+      <div class="tray" id="cal-tray">
+        <h3>🎒 획득한 카드 <span class="n" id="tray-n2">0장</span></h3>
+        <div class="tray-cards" id="tray-cal"></div>
+        <div class="cal-tip">💡 카드를 누른 뒤 날짜를 누르거나, 드래그해서 옮겨 보세요.<br>달력의 카드를 누르면 다시 가방으로 돌아와요.</div>
+      </div>
+      <div id="calendar">
+        <h2>📅 나의 여름방학 달력</h2>
+        <div class="sub" id="cal-range"></div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <nav id="tabbar">
+    <button id="tab-island" class="active">🏝️ 섬 탐험</button>
+    <button id="tab-calendar">📅 방학 달력</button>
+    <button id="tab-done">🎉 완료하기</button>
+  </nav>
+</section>
+
+<!-- ============ 완료 화면 ============ -->
+<section id="screen-done" class="hidden">
+  <div id="done-capture">
+    <h1>🎉 <span id="done-name"></span>의 여름방학 준비 완료!</h1>
+    <div class="grade-box" id="grade-box"></div>
+    <div id="done-island"></div>
+    <div class="done-grid">
+      <div class="done-box">
+        <h3>📊 나의 활동 통계</h3>
+        <div id="done-stats"></div>
+      </div>
+      <div class="done-box">
+        <h3>🗓️ 나의 방학 계획</h3>
+        <div class="done-list" id="done-list"></div>
+      </div>
+    </div>
+  </div>
+  <div class="done-actions">
+    <button class="btn-main" id="btn-png">🖼️ PNG 저장</button>
+    <button class="btn-sub" id="btn-print">🖨️ 인쇄하기</button>
+    <button class="btn-sub" id="btn-back">← 돌아가기</button>
+  </div>
+</section>
+
+<!-- 모달 / 토스트 -->
+<div id="modal-bg" class="hidden">
+  <div class="modal" id="modal-inner"></div>
+</div>
+<div id="toast-wrap"></div>
+
+<script>
+/* =================== 데이터 =================== */
+const CATS = {
+  learn:{name:'📚 배움', cls:'cat-learn'},
+  health:{name:'⚽ 건강', cls:'cat-health'},
+  hobby:{name:'🎨 취미', cls:'cat-hobby'},
+  family:{name:'👨‍👩‍👧 가족', cls:'cat-family'},
+  nature:{name:'🌿 자연', cls:'cat-nature'},
+  share:{name:'💖 나눔', cls:'cat-share'},
+};
+
+const LOCS = [
+  {id:'palm',  emoji:'🌴', name:'야자수',   x:24, y:47},
+  {id:'beach', emoji:'🏖️', name:'해변',     x:38, y:82},
+  {id:'light', emoji:'🗼', name:'등대',     x:83, y:42},
+  {id:'cave',  emoji:'🕳️', name:'동굴',     x:66, y:52},
+  {id:'sand',  emoji:'🏰', name:'모래성',   x:62, y:84},
+  {id:'chest', emoji:'🪙', name:'보물상자', x:18, y:74},
+  {id:'fall',  emoji:'💦', name:'폭포',     x:44, y:44},
+  {id:'forest',emoji:'🌲', name:'숲',       x:56, y:62},
+  {id:'shell', emoji:'🐚', name:'조개',     x:80, y:76},
+];
+
+let _id = 0;
+const C = (loc, emoji, name, cat) => ({id:'c'+(++_id), loc, emoji, name, cat});
+const CARDS = [
+  C('palm','🚶','가족과 산책하기','family'), C('palm','🎬','가족 영화의 밤','family'),
+  C('palm','🍕','가족 외식하기','family'),   C('palm','🎲','보드게임 하기','family'),
+  C('palm','✈️','가족 여행 가기','family'),
+  C('beach','🏊','물놀이하기','health'),     C('beach','🤽','수영 연습하기','health'),
+  C('beach','🤸','아침 줄넘기','health'),    C('beach','🚴','자전거 타기','health'),
+  C('beach','🏸','배드민턴 치기','health'),
+  C('light','🏛️','박물관 가기','learn'),     C('light','🔤','영어 공부하기','learn'),
+  C('light','➗','수학 복습하기','learn'),   C('light','📕','도서관 가기','learn'),
+  C('light','🔭','과학관 견학','learn'),
+  C('cave','📚','책 한 권 읽기','learn'),    C('cave','✏️','그림일기 쓰기','learn'),
+  C('cave','🧪','과학 실험하기','learn'),    C('cave','⭐','별자리 공부','nature'),
+  C('cave','💭','만화 그리기','hobby'),
+  C('sand','🎨','그림 그리기','hobby'),      C('sand','🧱','레고 만들기','hobby'),
+  C('sand','📄','종이접기','hobby'),         C('sand','📷','사진 찍기','hobby'),
+  C('sand','🍳','요리 도전하기','hobby'),
+  C('chest','🤝','봉사활동 하기','share'),   C('chest','🧹','집안일 돕기','share'),
+  C('chest','🧸','동생과 놀아주기','share'), C('chest','😊','친절 실천하기','share'),
+  C('chest','💌','마음 편지 쓰기','share'),
+  C('fall','⛰️','계곡 물놀이','nature'),     C('fall','🥾','등산하기','health'),
+  C('fall','🎣','낚시하기','nature'),        C('fall','🪨','물수제비 뜨기','nature'),
+  C('fall','🌊','바다 구경하기','nature'),
+  C('forest','🐛','곤충 관찰하기','nature'), C('forest','🌱','식물 키우기','nature'),
+  C('forest','🌙','별 보기','nature'),       C('forest','🐦','새 관찰하기','nature'),
+  C('forest','⛺','캠핑하기','family'),
+  C('shell','🎧','음악 감상하기','hobby'),   C('shell','🎹','악기 연주하기','hobby'),
+  C('shell','🍉','수박 파티','family'),      C('shell','🎥','영화 보기','hobby'),
+  C('shell','😴','푹 쉬기 (낮잠)','health'),
+];
+
+/* -------- 도전 과제: 3지선다 퀴즈 -------- */
+const QUIZ = [
+  {q:'여름에 시원한 울음소리를 들려주는 곤충은?', o:['매미','귀뚜라미','반딧불이'], a:0},
+  {q:'물놀이를 하기 전에 꼭 해야 하는 것은?', o:['준비운동 하기','바로 뛰어들기','밥 많이 먹기'], a:0},
+  {q:'무지개는 모두 몇 가지 색깔일까요?', o:['5가지','7가지','9가지'], a:1},
+  {q:'바다에 사는 가장 큰 동물은?', o:['상어','흰수염고래','문어'], a:1},
+  {q:'태양계에서 가장 큰 행성은?', o:['지구','토성','목성'], a:2},
+  {q:'여름에 뜨거운 햇볕을 막으려면 무엇을 발라야 할까요?', o:['자외선 차단제','치약','물감'], a:0},
+  {q:'모기에 물리지 않으려면 어떻게 해야 할까요?', o:['모기 기피제 뿌리기','단 것 많이 먹기','늦게까지 놀기'], a:0},
+  {q:'수박은 무엇이 가장 많이 들어 있을까요?', o:['물','설탕','소금'], a:0},
+  {q:'바닷물이 짠 이유는 무엇이 녹아 있어서일까요?', o:['설탕','소금','식초'], a:1},
+  {q:'해바라기는 무엇을 따라 움직일까요?', o:['달','바람','해'], a:2},
+  {q:'우리나라의 여름 장마철에 자주 오는 것은?', o:['눈','비','우박'], a:1},
+  {q:'등대는 밤에 무엇을 도와줄까요?', o:['배가 길을 찾도록','물고기가 잠자도록','파도가 멈추도록'], a:0},
+  {q:'개구리의 아기 때 모습은?', o:['올챙이','애벌레','병아리'], a:0},
+  {q:'식물이 자라는 데 꼭 필요한 세 가지는?', o:['햇빛·물·흙','사탕·주스·빵','TV·게임·폰'], a:0},
+  {q:'더운 날 몸에 물이 부족하지 않으려면?', o:['물을 자주 마신다','물을 참는다','탄산만 마신다'], a:0},
+  {q:'밤하늘에서 국자 모양으로 보이는 별자리는?', o:['북두칠성','오리온자리','전갈자리'], a:0},
+  {q:'조개는 어디에서 살까요?', o:['사막','바다와 갯벌','나무 위'], a:1},
+  {q:'쓰레기를 발견하면 어떻게 해야 할까요?', o:['분리수거함에 버린다','바다에 던진다','모래에 묻는다'], a:0},
+  {q:'책을 읽으면 좋은 점은?', o:['상상력이 자란다','키가 갑자기 큰다','더위가 사라진다'], a:0},
+  {q:'거북이는 어디에 알을 낳을까요?', o:['모래 속','나무 위','구름 위'], a:0},
+  {q:'폭포의 물은 어디로 흘러갈까요?', o:['하늘 위로','아래로','옆으로만'], a:1},
+  {q:'여름철 음식은 어떻게 보관해야 안전할까요?', o:['냉장고에 넣는다','햇볕에 둔다','가방에 둔다'], a:0},
+  {q:'자전거를 탈 때 꼭 써야 하는 것은?', o:['헬멧','밀짚모자','수영모'], a:0},
+  {q:'바닷가에서 파도가 세지면 어떻게 해야 할까요?', o:['물 밖으로 나온다','더 깊이 들어간다','눈을 감는다'], a:0},
+];
+/* -------- 도전 과제: OX 퀴즈 -------- */
+const OX = [
+  {q:'매미는 여름에 울어요.', a:true},
+  {q:'번개가 칠 때는 큰 나무 아래로 피하는 것이 안전해요.', a:false},
+  {q:'물놀이 중에는 껌을 씹으면서 수영해도 괜찮아요.', a:false},
+  {q:'수박은 여름에 많이 먹는 과일이에요.', a:true},
+  {q:'바다거북은 바다에 사는 파충류예요.', a:true},
+  {q:'선풍기 바람은 얼음으로 만들어져요.', a:false},
+  {q:'여름에는 낮이 겨울보다 길어요.', a:true},
+  {q:'모래성은 마른 모래로 만들 때 가장 튼튼해요.', a:false},
+  {q:'불가사리는 바다에 사는 동물이에요.', a:true},
+  {q:'해수욕장에서는 안전요원이 없는 곳에서 수영해도 돼요.', a:false},
+  {q:'식물은 물을 주지 않아도 계속 자라요.', a:false},
+  {q:'별은 낮에도 하늘에 떠 있어요.', a:true},
+  {q:'아이스크림을 한 번에 많이 먹으면 배가 아플 수 있어요.', a:true},
+  {q:'낚시를 할 때는 조용히 기다리는 것이 좋아요.', a:true},
+  {q:'동굴 속은 바깥보다 더 더워요.', a:false},
+  {q:'횡단보도를 건널 때는 좌우를 살펴야 해요.', a:true},
+];
+
+const STAGES = [
+  {need:0,  name:'무인도'},
+  {need:5,  name:'야자수가 자라는 섬'},
+  {need:10, name:'해변이 넓어진 섬'},
+  {need:15, name:'꽃이 핀 섬'},
+  {need:20, name:'작은 집이 생긴 섬'},
+  {need:25, name:'동물 친구들의 섬'},
+  {need:30, name:'🌈 완성된 버킷섬'},
+];
+const STAGE_DECOS = [
+  [],
+  [{em:'🌴',x:70,y:60},{em:'🌴',x:30,y:58}],
+  [{em:'⛱️',x:48,y:88},{em:'🛟',x:28,y:88}],
+  [{em:'🌸',x:36,y:66},{em:'🌺',x:74,y:64},{em:'🌼',x:50,y:52}],
+  [{em:'🏡',x:52,y:70}],
+  [{em:'🦜',x:64,y:44,cls:'fly'},{em:'🐢',x:24,y:84},{em:'🦀',x:70,y:90}],
+  [{em:'✨',x:52,y:36},{em:'🚩',x:86,y:56},{em:'🌻',x:14,y:60}],
+];
+const DIV_BONUS = [
+  {need:3, em:'🦋', x:40, y:36, cls:'fly',  msg:'✨ 다양성 보너스! 나비가 찾아왔어요'},
+  {need:4, em:'🐬', x:12, y:94, cls:'swim', msg:'✨ 다양성 보너스! 돌고래가 나타났어요'},
+  {need:5, em:'🎆', x:78, y:26, cls:'',     msg:'✨ 다양성 보너스! 불꽃놀이가 시작돼요'},
+  {need:6, em:'🌈', x:50, y:20, cls:'',     msg:'🌈 최고! 여섯 가지 활동을 골고루 담았어요'},
+];
+
+/* =================== 상태 =================== */
+const state = {
+  name:'', calStart:null, calEnd:null,
+  drawn:{}, bag:[], placed:{},
+  stage:0, divShown:0, selected:null,
+  quizOrder:[], quizIdx:0, oxOrder:[], oxIdx:0,
+};
+const cardById = id => CARDS.find(c=>c.id===id);
+const placedCount = () => Object.values(state.placed).reduce((a,v)=>a+v.length,0);
+const placedCats = () => new Set(Object.values(state.placed).flat().map(id=>cardById(id).cat));
+const $ = s => document.querySelector(s);
+const shuffle = arr => arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(v=>v[1]);
+
+/* =================== 시작 =================== */
+$('#btn-start').addEventListener('click', () => {
+  const n = $('#inp-name').value.trim() || '나';
+  const sv = $('#inp-start').value, ev = $('#inp-end').value;
+  if(!sv || !ev){ toast('방학식과 개학식 날짜를 모두 골라 주세요 📅'); return; }
+  const s = new Date(sv+'T00:00:00'), e = new Date(ev+'T00:00:00');
+  const end = new Date(e); end.setDate(end.getDate()-1);   // 개학식 전날까지
+  const days = Math.round((end-s)/86400000)+1;
+  if(days < 3){ toast('개학식은 방학식보다 며칠 뒤여야 해요!'); return; }
+  if(days > 80){ toast('방학이 80일보다 길 수는 없어요. 날짜를 확인해 주세요!'); return; }
+  state.name = n; state.calStart = s; state.calEnd = end;
+  state.quizOrder = shuffle(QUIZ.map((_,i)=>i));
+  state.oxOrder = shuffle(OX.map((_,i)=>i));
+  $('#tb-title').textContent = `🏝️ ${n}의 버킷섬`;
+  $('#cal-range').textContent =
+    `${s.getFullYear()}년 ${s.getMonth()+1}월 ${s.getDate()}일 ~ ${end.getMonth()+1}월 ${end.getDate()}일 (총 ${days}일)`;
+  $('#screen-start').classList.add('hidden');
+  $('#screen-main').classList.remove('hidden');
+  refresh();
+  toast(`${n}의 버킷섬에 도착했어요! 도전 과제를 해결해 보세요 🔎`);
+});
+$('#inp-name').addEventListener('keydown', e => { if(e.key==='Enter') $('#btn-start').click(); });
+
+/* =================== 섬 렌더 =================== */
+function renderSpots(){
+  const layer = $('#spot-layer'); layer.innerHTML = '';
+  LOCS.forEach(loc => {
+    const used = state.drawn[loc.id]||0;
+    const b = document.createElement('button');
+    b.className = 'spot' + (used>=5 ? ' done' : '');
+    b.style.left = loc.x+'%'; b.style.top = loc.y+'%';
+    b.innerHTML = `<span class="em">${loc.emoji}</span><span class="tag">${loc.name}</span>
+      <span class="cnt">${used>=5?'✓':(5-used)}</span>`;
+    b.addEventListener('click', ()=>explore(loc));
+    layer.appendChild(b);
+  });
+}
+
+/* =================== 도전 과제 =================== */
+function explore(loc){
+  const used = state.drawn[loc.id]||0;
+  if(used>=5){ toast(`${loc.name}의 카드는 모두 찾았어요! 다른 곳을 살펴봐요 🔎`); return; }
+  const card = CARDS.filter(c=>c.loc===loc.id)[used];
+  const t = Math.random();
+  if(t < 0.4) challengeQuiz(loc, card);
+  else if(t < 0.7) challengeOX(loc, card);
+  else challengeFind(loc, card);
+}
+function openModal(html){
+  $('#modal-inner').innerHTML = html;
+  $('#modal-bg').classList.remove('hidden');
+}
+function closeModal(){ $('#modal-bg').classList.add('hidden'); }
+
+function challengeQuiz(loc, card){
+  const q = QUIZ[state.quizOrder[state.quizIdx % state.quizOrder.length]];
+  state.quizIdx++;
+  openModal(`
+    <div class="place">${loc.emoji} ${loc.name}의 도전 과제</div>
+    <span class="ch-type">🧠 깜짝 퀴즈</span>
+    <div class="ch-q">${q.q}</div>
+    <div class="ch-opts" id="ch-opts"></div>
+    <div class="ch-feedback" id="ch-fb"></div>`);
+  const box = $('#ch-opts');
+  q.o.forEach((opt,i)=>{
+    const b = document.createElement('button');
+    b.className='ch-opt'; b.textContent = ['①','②','③'][i]+' '+opt;
+    b.addEventListener('click', ()=>{
+      if(i===q.a){ b.classList.add('right'); success(loc, card); }
+      else{
+        b.classList.add('wrong'); b.disabled = true;
+        $('#ch-fb').textContent='앗, 다시 한번 생각해 봐요! 🤔';
+        $('#ch-fb').className='ch-feedback bad';
+      }
+    });
+    box.appendChild(b);
+  });
+}
+function challengeOX(loc, card){
+  const q = OX[state.oxOrder[state.oxIdx % state.oxOrder.length]];
+  state.oxIdx++;
+  openModal(`
+    <div class="place">${loc.emoji} ${loc.name}의 도전 과제</div>
+    <span class="ch-type">⭕❌ OX 퀴즈</span>
+    <div class="ch-q">${q.q}</div>
+    <div class="ch-opts row" id="ch-opts"></div>
+    <div class="ch-feedback" id="ch-fb"></div>`);
+  const box = $('#ch-opts');
+  [['⭕ 맞아요',true],['❌ 아니에요',false]].forEach(([label,val])=>{
+    const b = document.createElement('button');
+    b.className='ch-opt'; b.textContent=label; b.style.fontSize='18px';
+    b.addEventListener('click', ()=>{
+      if(val===q.a){ b.classList.add('right'); success(loc, card); }
+      else{
+        b.classList.add('wrong'); b.disabled=true;
+        $('#ch-fb').textContent='앗, 다시 한번 생각해 봐요! 🤔';
+        $('#ch-fb').className='ch-feedback bad';
+      }
+    });
+    box.appendChild(b);
+  });
+}
+const FIND_SETS = [
+  ['🐚','🐌'],['🌴','🌳'],['🐟','🐠'],['⭐','🌟'],['🍉','🍓'],
+  ['🦀','🦞'],['🌸','🌺'],['🐢','🐸'],['☀️','🌞'],['⛵','🚤'],
+];
+function challengeFind(loc, card){
+  const [base, odd] = FIND_SETS[Math.floor(Math.random()*FIND_SETS.length)];
+  const oddIdx = Math.floor(Math.random()*12);
+  openModal(`
+    <div class="place">${loc.emoji} ${loc.name}의 도전 과제</div>
+    <span class="ch-type">👀 다른 그림 찾기</span>
+    <div class="ch-q">모두 똑같아 보이지만 딱 하나가 달라요.<br>다른 하나를 찾아 눌러 보세요!</div>
+    <div class="ch-grid" id="ch-grid"></div>
+    <div class="ch-feedback" id="ch-fb"></div>`);
+  const grid = $('#ch-grid');
+  for(let i=0;i<12;i++){
+    const b = document.createElement('button');
+    b.textContent = i===oddIdx ? odd : base;
+    b.addEventListener('click', ()=>{
+      if(i===oddIdx){ b.style.background='#DFF6E4'; success(loc, card); }
+      else{
+        b.classList.add('wrong');
+        $('#ch-fb').textContent='거기가 아니에요! 다시 잘 살펴봐요 👀';
+        $('#ch-fb').className='ch-feedback bad';
+        setTimeout(()=>b.classList.remove('wrong'), 400);
+      }
+    });
+    grid.appendChild(b);
+  }
+}
+function success(loc, card){
+  const fb = $('#ch-fb');
+  if(fb){ fb.textContent='정답! 🎉'; fb.className='ch-feedback good'; }
+  setTimeout(()=>{
+    state.drawn[loc.id] = (state.drawn[loc.id]||0)+1;
+    state.bag.push(card.id);
+    const cat = CATS[card.cat];
+    openModal(`
+      <div class="place">🎁 도전 성공! 카드를 획득했어요</div>
+      <div class="big">${card.emoji}</div>
+      <h3>${card.name}</h3>
+      <div class="ct ${cat.cls}">${cat.name}</div><br>
+      <button class="btn-main" id="md-ok">카드 담기 🎒</button>`);
+    $('#md-ok').addEventListener('click', closeModal);
+    refresh();
+  }, 550);
+}
+$('#modal-bg').addEventListener('click', e => { if(e.target.id==='modal-bg') closeModal(); });
+
+/* =================== 성장 데코 =================== */
+function renderDecos(container, animateNew){
+  container = container || $('#deco-layer');
+  container.innerHTML = '';
+  const put = (d, isNew) => {
+    const s = document.createElement('span');
+    s.className = 'deco ' + (d.cls||'') + (isNew&&animateNew ? ' new' : '');
+    s.style.left = d.x+'%'; s.style.top = d.y+'%';
+    s.textContent = d.em;
+    container.appendChild(s);
+  };
+  for(let i=1;i<=state.stage;i++) STAGE_DECOS[i].forEach(d=>put(d, i===state.stage));
+  DIV_BONUS.forEach((b,i)=>{ if(placedCats().size>=b.need) put(b, i===state.divShown-1); });
+}
+
+/* =================== 트레이 =================== */
+function cardEl(card, forCal){
+  const d = document.createElement('div');
+  d.className = 'card ' + CATS[card.cat].cls + (state.selected===card.id?' selected':'');
+  d.draggable = true;
+  d.innerHTML = `<div class="em">${card.emoji}</div><div class="nm">${card.name}</div>
+    <span class="ct">${CATS[card.cat].name}</span>`;
+  d.addEventListener('click', ()=>{
+    state.selected = state.selected===card.id ? null : card.id;
+    renderTrays(); renderCalendar();
+    if(state.selected && !forCal){ switchTab('calendar'); toast('달력에서 날짜를 눌러 계획을 정해요 📅'); }
+  });
+  d.addEventListener('dragstart', e=>{
+    state.selected = card.id; e.dataTransfer.setData('text/plain', card.id);
+    renderCalendar();
+  });
+  return d;
+}
+function renderTrays(){
+  const bagCards = state.bag.map(cardById);
+  [['#tray-island',false],['#tray-cal',true]].forEach(([sel,forCal])=>{
+    const box = $(sel); box.innerHTML='';
+    if(!bagCards.length){
+      box.innerHTML = `<div class="tray-empty">${forCal?'섬에서 도전 과제를 풀고 카드를 모아 오세요! 🏝️':'아직 카드가 없어요. 섬 곳곳을 눌러 도전해 보세요!'}</div>`;
+    } else bagCards.forEach(c=>box.appendChild(cardEl(c, forCal)));
+  });
+  $('#tray-n').textContent = bagCards.length+'장';
+  $('#tray-n2').textContent = bagCards.length+'장';
+}
+
+/* =================== 달력 =================== */
+const dkey = d => `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+function renderCalendar(){
+  if(!state.calStart) return;
+  const grid = $('#cal-grid'); grid.innerHTML='';
+  ['일','월','화','수','목','금','토'].forEach(w=>{
+    const s=document.createElement('div'); s.className='wd'; s.textContent=w; grid.appendChild(s);
+  });
+  for(let i=0;i<state.calStart.getDay();i++){
+    const b=document.createElement('div'); b.className='day blank'; grid.appendChild(b);
+  }
+  for(let d=new Date(state.calStart); d<=state.calEnd; d.setDate(d.getDate()+1)){
+    const date = new Date(d), key = dkey(date);
+    const cell = document.createElement('div');
+    cell.className = 'day' + (date.getMonth()%2?' m8':'') + (state.selected?' can-place':'');
+    cell.innerHTML = `<span class="dn">${date.getMonth()+1}/${date.getDate()}</span>`;
+    (state.placed[key]||[]).forEach(id=>{
+      const c = cardById(id);
+      const chip = document.createElement('span');
+      chip.className = 'chip ' + CATS[c.cat].cls;
+      chip.innerHTML = `${c.emoji} ${c.name}`;
+      chip.title = '누르면 가방으로 돌아가요';
+      chip.addEventListener('click', e=>{ e.stopPropagation(); unplace(key,id); });
+      cell.appendChild(chip);
+    });
+    cell.addEventListener('click', ()=>{ if(state.selected) place(key, state.selected); });
+    cell.addEventListener('dragover', e=>{ e.preventDefault(); cell.classList.add('droptarget'); });
+    cell.addEventListener('dragleave', ()=>cell.classList.remove('droptarget'));
+    cell.addEventListener('drop', e=>{
+      e.preventDefault(); cell.classList.remove('droptarget');
+      const id = e.dataTransfer.getData('text/plain'); if(id) place(key,id);
+    });
+    grid.appendChild(cell);
+  }
+}
+function place(key,id){
+  if(!state.bag.includes(id)) return;
+  state.bag = state.bag.filter(x=>x!==id);
+  (state.placed[key] = state.placed[key]||[]).push(id);
+  state.selected = null;
+  refresh(); checkGrowth();
+}
+function unplace(key,id){
+  state.placed[key] = state.placed[key].filter(x=>x!==id);
+  if(!state.placed[key].length) delete state.placed[key];
+  state.bag.push(id);
+  refresh(); checkGrowth(true);
+}
+
+/* =================== 성장 & 보너스 =================== */
+function calcStage(){
+  let s=0; STAGES.forEach((st,i)=>{ if(placedCount()>=st.need) s=i; }); return s;
+}
+function checkGrowth(silent){
+  const ns = calcStage();
+  if(ns>state.stage && !silent){
+    state.stage = ns;
+    toast(`✨ 섬이 성장했어요! ${STAGES[ns].name}`, true);
+  } else state.stage = ns;
+  const dv = placedCats().size;
+  DIV_BONUS.forEach((b,i)=>{
+    if(dv>=b.need && state.divShown<i+1){
+      state.divShown = i+1;
+      if(!silent) toast(b.msg, true);
+    }
+  });
+  if(dv < (DIV_BONUS[state.divShown-1]?.need||0)) state.divShown = DIV_BONUS.filter(b=>dv>=b.need).length;
+  renderDecos(null, !silent);
+  renderStageBanner();
+}
+function renderStageBanner(){
+  $('#stage-name').textContent = STAGES[state.stage].name;
+  const cur = placedCount();
+  const next = STAGES[Math.min(state.stage+1, STAGES.length-1)].need;
+  const pct = state.stage>=STAGES.length-1 ? 100 : Math.min(100, cur/next*100);
+  $('#stage-bar').style.width = pct+'%';
+}
+
+/* =================== 공통 갱신 =================== */
+function refresh(){
+  $('#st-found').textContent = Object.values(state.drawn).reduce((a,v)=>a+v,0);
+  $('#st-placed').textContent = placedCount();
+  $('#st-div').textContent = placedCats().size;
+  renderSpots(); renderTrays(); renderCalendar(); renderStageBanner();
+}
+
+/* =================== 탭 =================== */
+function switchTab(t){
+  $('#view-island').classList.toggle('hidden', t!=='island');
+  $('#view-calendar').classList.toggle('hidden', t!=='calendar');
+  $('#tab-island').classList.toggle('active', t==='island');
+  $('#tab-calendar').classList.toggle('active', t==='calendar');
+}
+$('#tab-island').addEventListener('click', ()=>switchTab('island'));
+$('#tab-calendar').addEventListener('click', ()=>switchTab('calendar'));
+$('#tab-done').addEventListener('click', finish);
+
+/* =================== 점수 & 등급 =================== */
+function gradePlan(){
+  const cnt = placedCount();
+  const cats = placedCats().size;
+  // ① 계획 개수 (40점) : 20개면 만점
+  const sCount = Math.round(Math.min(cnt,20)/20*40);
+  // ② 다양성 (30점) : 6개 카테고리 골고루
+  const sDiv = Math.round(cats/6*30);
+  // ③ 골고루 분포 (30점) : 방학을 주 단위로 나눠 계획이 있는 주의 비율
+  const totalDays = Math.round((state.calEnd-state.calStart)/86400000)+1;
+  const totalWeeks = Math.ceil(totalDays/7);
+  const weeksUsed = new Set(Object.keys(state.placed).map(k=>{
+    const [y,m,d]=k.split('-').map(Number);
+    return Math.floor((new Date(y,m-1,d)-state.calStart)/86400000/7);
+  })).size;
+  const sSpread = Math.round(weeksUsed/totalWeeks*30);
+  const total = sCount+sDiv+sSpread;
+  let grade, comment;
+  if(total>=90){ grade='🌟 전설의 계획왕'; comment='완벽해요! 다양한 활동을 방학 내내 골고루 담은 최고의 계획이에요. 이대로만 실천하면 최고의 여름방학이 될 거예요!'; }
+  else if(total>=75){ grade='💎 멋진 탐험가'; comment='아주 훌륭한 계획이에요! 조금만 더 다양한 활동을 담거나 비어 있는 주에 계획을 넣으면 전설이 될 수 있어요.'; }
+  else if(total>=60){ grade='🌈 성실한 모험가'; comment='좋은 시작이에요! 아직 계획이 없는 주가 있는지, 안 해본 종류의 활동이 있는지 살펴보면 더 알찬 방학이 될 거예요.'; }
+  else if(total>=40){ grade='🌱 새싹 탐험가'; comment='방학 계획의 씨앗을 심었어요! 섬을 더 탐험해서 카드를 모으고 달력을 채우면 등급이 쑥쑥 올라가요.'; }
+  else { grade='🐣 이제 시작!'; comment='모험은 이제 시작이에요! 섬으로 돌아가 도전 과제를 풀고 계획을 더 많이 세워 보세요.'; }
+  return {total, grade, comment, sCount, sDiv, sSpread, weeksUsed, totalWeeks};
+}
+
+/* =================== 완료 =================== */
+function finish(){
+  if(placedCount()===0){ toast('먼저 카드를 달력에 배치해 보세요! 📅'); switchTab('calendar'); return; }
+  $('#done-name').textContent = state.name;
+  // 등급
+  const g = gradePlan();
+  $('#grade-box').innerHTML = `
+    <div class="gr">${g.grade}</div>
+    <div class="sc">종합 점수 ${g.total}점 / 100점</div>
+    <div class="cm">${g.comment}</div>
+    <div class="grade-detail">
+      <span class="grade-pill">📋 계획 개수 <b>${g.sCount}</b>/40</span>
+      <span class="grade-pill">🎨 다양성 <b>${g.sDiv}</b>/30</span>
+      <span class="grade-pill">📆 골고루 배치 <b>${g.sSpread}</b>/30 <small>(${g.weeksUsed}/${g.totalWeeks}주)</small></span>
+    </div>`;
+  // 섬 스냅샷
+  const isle = $('#done-island');
+  isle.innerHTML = `<div style="position:absolute;top:5%;right:7%;font-size:38px;">☀️</div><div class="island-land"></div>`;
+  const saveLayer = document.createElement('div');
+  saveLayer.style.cssText='position:absolute;inset:0;';
+  isle.appendChild(saveLayer);
+  renderDecos(saveLayer,false);
+  LOCS.forEach(loc=>{
+    const s=document.createElement('span');
+    s.className='deco'; s.style.left=loc.x+'%'; s.style.top=loc.y+'%'; s.textContent=loc.emoji;
+    saveLayer.appendChild(s);
+  });
+  // 통계
+  const stats = $('#done-stats'); stats.innerHTML='';
+  const counts = {}; Object.values(state.placed).flat().forEach(id=>{
+    const c=cardById(id); counts[c.cat]=(counts[c.cat]||0)+1;
+  });
+  const max = Math.max(1,...Object.values(counts));
+  Object.entries(CATS).forEach(([k,cat])=>{
+    const v = counts[k]||0;
+    const row=document.createElement('div');
+    row.className='statbar '+cat.cls;
+    row.innerHTML=`<span class="lb">${cat.name}</span><span class="tr"><i style="width:${v/max*100}%"></i></span><span class="vl">${v}개</span>`;
+    stats.appendChild(row);
+  });
+  // 계획 목록
+  const list = $('#done-list'); list.innerHTML='';
+  Object.keys(state.placed).sort((a,b)=>{
+    const [ya,ma,da]=a.split('-').map(Number), [yb,mb,db]=b.split('-').map(Number);
+    return new Date(ya,ma-1,da)-new Date(yb,mb-1,db);
+  }).forEach(k=>{
+    const [,m,d]=k.split('-');
+    const items = state.placed[k].map(id=>{const c=cardById(id); return `${c.emoji} ${c.name}`;}).join(', ');
+    list.innerHTML += `<div><b>${m}월 ${d}일</b> — ${items}</div>`;
+  });
+  $('#screen-main').classList.add('hidden');
+  $('#screen-done').classList.remove('hidden');
+  window.scrollTo(0,0);
+  confetti();
+}
+$('#btn-back').addEventListener('click', ()=>{
+  $('#screen-done').classList.add('hidden');
+  $('#screen-main').classList.remove('hidden');
+});
+$('#btn-print').addEventListener('click', ()=>window.print());
+$('#btn-png').addEventListener('click', async ()=>{
+  const btn = $('#btn-png'); btn.textContent='저장 중...';
+  try{
+    const canvas = await html2canvas($('#done-capture'), {scale:2, backgroundColor:'#ffffff', useCORS:true});
+    const a = document.createElement('a');
+    a.download = `${state.name}의_버킷섬_방학계획.png`;
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+    toast('이미지를 저장했어요! 🖼️', true);
+  }catch(e){ toast('저장에 실패했어요. 인쇄하기를 이용해 보세요.'); }
+  btn.textContent='🖼️ PNG 저장';
+});
+function confetti(){
+  const ems=['🎉','🎊','⭐','🌸','🍉','☀️','🏖️'];
+  for(let i=0;i<28;i++){
+    const s=document.createElement('span');
+    s.className='confetti';
+    s.textContent=ems[i%ems.length];
+    s.style.left=Math.random()*100+'vw';
+    s.style.animationDuration=(2.5+Math.random()*2)+'s';
+    s.style.animationDelay=(Math.random()*.8)+'s';
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(), 6000);
+  }
+}
+
+/* =================== 토스트 =================== */
+function toast(msg, gold){
+  const w = $('#toast-wrap');
+  const t = document.createElement('div');
+  t.className = 'toast'+(gold?' gold':'');
+  t.textContent = msg;
+  w.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .4s'; }, 2600);
+  setTimeout(()=>t.remove(), 3100);
+}
+</script>
+</body>
+</html>
