@@ -4,9 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>여름방학 어드벤처 : 버킷섬</title>
-<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
+@font-face {
+    font-family: 'YuhanKimberlyPureunsoop';
+    src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/2607101517@font-2/font-2/font-2-300.woff2') format('woff2');
+    font-weight: 300;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'YuhanKimberlyPureunsoop';
+    src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/2607101517@font-2/font-2/font-2-500.woff2') format('woff2');
+    font-weight: 500;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'YuhanKimberlyPureunsoop';
+    src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/2607101517@font-2/font-2/font-2-700.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
 :root{
   --ocean:#4EC3D6; --ocean-deep:#2A9DB5; --sky:#CDEFF7;
   --sand:#F9E9BD; --sand-deep:#EFCF8E; --leaf:#4FB06D;
@@ -16,11 +33,11 @@
 *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
 html,body{height:100%;}
 body{
-  font-family:'Noto Sans KR',sans-serif; color:var(--ink);
+  font-family:'YuhanKimberlyPureunsoop',sans-serif; font-weight:500; color:var(--ink);
   background:linear-gradient(180deg,var(--sky) 0%,#A5E2EF 45%,var(--ocean) 100%);
   min-height:100vh; overflow-x:hidden;
 }
-h1,h2,h3,.jua,button{font-family:'Jua',sans-serif;}
+h1,h2,h3,.jua,button{font-family:'YuhanKimberlyPureunsoop',sans-serif; font-weight:700;}
 button{cursor:pointer; border:none; background:none; color:inherit;}
 .hidden{display:none !important;}
 
@@ -43,9 +60,9 @@ button{cursor:pointer; border:none; background:none; color:inherit;}
   display:flex; flex-direction:column; gap:12px; z-index:2; width:min(400px,92vw);
 }
 .setup-row{display:flex; flex-direction:column; gap:5px; text-align:left;}
-.setup-row label{font-family:'Jua'; font-size:15px;}
+.setup-row label{font-family:'YuhanKimberlyPureunsoop'; font-weight:700; font-size:15px;}
 .setup-row input{
-  border:none; outline:none; font-size:16px; font-family:'Noto Sans KR'; padding:10px 14px;
+  border:none; outline:none; font-size:16px; font-family:'YuhanKimberlyPureunsoop'; padding:10px 14px;
   border-radius:12px; background:#F2FAFC; color:var(--ink); width:100%;
 }
 .setup-dates{display:flex; gap:10px;}
@@ -70,7 +87,7 @@ button{cursor:pointer; border:none; background:none; color:inherit;}
   padding:10px 14px; background:rgba(255,255,255,.85); backdrop-filter:blur(6px);
   position:sticky; top:0; z-index:40; box-shadow:0 2px 10px rgba(29,78,99,.1);
 }
-#topbar .title{font-family:'Jua'; font-size:19px; margin-right:auto;}
+#topbar .title{font-family:'YuhanKimberlyPureunsoop'; font-weight:700; font-size:19px; margin-right:auto;}
 .stat{
   display:flex; align-items:center; gap:5px; background:#F2FAFC; border-radius:99px;
   padding:5px 12px; font-size:14px; font-weight:700;
@@ -121,7 +138,7 @@ button{cursor:pointer; border:none; background:none; color:inherit;}
   animation:bob 2.6s ease-in-out infinite;
 }
 .spot .tag{
-  font-size:clamp(10px,1.6vw,13px); font-family:'Jua'; background:rgba(255,255,255,.9);
+  font-size:clamp(10px,1.6vw,13px); font-family:'YuhanKimberlyPureunsoop'; font-weight:700; background:rgba(255,255,255,.9);
   padding:2px 8px; border-radius:99px; box-shadow:0 2px 4px rgba(29,78,99,.15); white-space:nowrap;
 }
 .spot .cnt{
@@ -143,7 +160,7 @@ button{cursor:pointer; border:none; background:none; color:inherit;}
 @keyframes swim{0%,100%{margin-left:0}50%{margin-left:40px}}
 .stage-banner{
   position:absolute; left:12px; top:12px; z-index:6; background:rgba(255,255,255,.9);
-  border-radius:12px; padding:6px 12px; font-family:'Jua'; font-size:14px; box-shadow:0 3px 8px rgba(29,78,99,.15);
+  border-radius:12px; padding:6px 12px; font-family:'YuhanKimberlyPureunsoop'; font-weight:700; font-size:14px; box-shadow:0 3px 8px rgba(29,78,99,.15);
 }
 .stage-banner .bar{width:120px; height:8px; background:#E3F2F7; border-radius:99px; margin-top:4px; overflow:hidden;}
 .stage-banner .bar i{display:block; height:100%; background:linear-gradient(90deg,var(--sun),var(--coral)); border-radius:99px; transition:width .5s;}
@@ -178,7 +195,7 @@ button{cursor:pointer; border:none; background:none; color:inherit;}
 #calendar h2{font-size:20px; margin-bottom:4px;}
 #calendar .sub{font-size:13px; color:#5b8194; margin-bottom:10px;}
 .cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:5px;}
-.cal-grid .wd{font-family:'Jua'; text-align:center; font-size:13px; padding:4px 0; color:#5b8194;}
+.cal-grid .wd{font-family:'YuhanKimberlyPureunsoop'; font-weight:700; text-align:center; font-size:13px; padding:4px 0; color:#5b8194;}
 .cal-grid .wd:first-child{color:var(--coral);} .cal-grid .wd:last-child{color:var(--health);}
 .day{
   min-height:72px; border-radius:10px; background:#F4FAFC; border:2px dashed transparent;
@@ -210,13 +227,13 @@ button{cursor:pointer; border:none; background:none; color:inherit;}
 .modal .big{font-size:60px; margin:6px 0;}
 .modal h3{font-size:22px; line-height:1.35; word-break:keep-all;}
 .modal .ct{font-size:12px; color:#fff; background:var(--cc); border-radius:99px; padding:3px 12px; display:inline-block; margin:8px 0 14px;}
-.ch-type{font-family:'Jua'; font-size:13px; color:#fff; background:var(--ink); border-radius:99px; padding:3px 14px; display:inline-block; margin-bottom:10px;}
-.ch-q{font-size:18px; font-family:'Jua'; line-height:1.45; margin:6px 0 16px; word-break:keep-all;}
+.ch-type{font-family:'YuhanKimberlyPureunsoop'; font-weight:700; font-size:13px; color:#fff; background:var(--ink); border-radius:99px; padding:3px 14px; display:inline-block; margin-bottom:10px;}
+.ch-q{font-size:18px; font-family:'YuhanKimberlyPureunsoop'; font-weight:700; line-height:1.45; margin:6px 0 16px; word-break:keep-all;}
 .ch-opts{display:flex; flex-direction:column; gap:8px;}
 .ch-opts.row{flex-direction:row;}
 .ch-opt{
   background:#F2FAFC; border:2px solid #DCEEF4; border-radius:14px; padding:12px 10px;
-  font-size:16px; font-family:'Jua'; transition:all .12s; flex:1;
+  font-size:16px; font-family:'YuhanKimberlyPureunsoop'; font-weight:700; transition:all .12s; flex:1;
 }
 .ch-opt:hover{border-color:var(--ocean);}
 .ch-opt.wrong{background:#FFE3E0; border-color:#F09085; animation:shake .35s;}
@@ -236,7 +253,7 @@ button{cursor:pointer; border:none; background:none; color:inherit;}
 /* ---------- 토스트 ---------- */
 #toast-wrap{position:fixed; top:64px; left:0; right:0; z-index:90; display:flex; flex-direction:column; align-items:center; gap:8px; pointer-events:none;}
 .toast{
-  background:var(--ink); color:#fff; font-family:'Jua'; font-size:15px; padding:10px 20px;
+  background:var(--ink); color:#fff; font-family:'YuhanKimberlyPureunsoop'; font-weight:700; font-size:15px; padding:10px 20px;
   border-radius:99px; box-shadow:0 6px 20px rgba(0,0,0,.25); animation:toastIn .4s cubic-bezier(.2,1.4,.4,1);
   max-width:90vw; text-align:center;
 }
@@ -266,12 +283,12 @@ button{cursor:pointer; border:none; background:none; color:inherit;}
   text-align:center; background:linear-gradient(135deg,#FFF6DE,#FFE9D6); border-radius:18px; padding:18px 14px;
   border:3px solid var(--sun);
 }
-.grade-box .gr{font-size:clamp(28px,6vw,42px); font-family:'Jua';}
-.grade-box .sc{font-size:16px; font-family:'Jua'; margin-top:2px;}
+.grade-box .gr{font-size:clamp(28px,6vw,42px); font-family:'YuhanKimberlyPureunsoop'; font-weight:700;}
+.grade-box .sc{font-size:16px; font-family:'YuhanKimberlyPureunsoop'; font-weight:700; margin-top:2px;}
 .grade-box .cm{font-size:14px; margin-top:8px; line-height:1.5; word-break:keep-all;}
 .grade-detail{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:12px;}
 .grade-pill{background:#fff; border-radius:12px; padding:8px 14px; font-size:13px; box-shadow:0 2px 6px rgba(29,78,99,.1);}
-.grade-pill b{font-family:'Jua'; color:var(--coral);}
+.grade-pill b{font-family:'YuhanKimberlyPureunsoop'; font-weight:700; color:var(--coral);}
 .done-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
 @media (max-width:680px){.done-grid{grid-template-columns:1fr;}}
 .done-box{background:#F6FBFD; border-radius:16px; padding:14px;}
@@ -282,7 +299,7 @@ button{cursor:pointer; border:none; background:none; color:inherit;}
 .statbar .tr i{display:block; height:100%; background:var(--cc); border-radius:99px;}
 .statbar .vl{width:26px; text-align:right; font-weight:700;}
 .done-list{font-size:13px; line-height:1.7; max-height:260px; overflow-y:auto;}
-.done-list b{font-family:'Jua'; color:var(--coral);}
+.done-list b{font-family:'YuhanKimberlyPureunsoop'; font-weight:700; color:var(--coral);}
 .done-actions{display:flex; gap:10px; flex-wrap:wrap; justify-content:center;}
 .confetti{position:fixed; top:-40px; font-size:24px; z-index:100; animation:fall linear forwards; pointer-events:none;}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg); opacity:.6;}}
@@ -306,7 +323,7 @@ button{cursor:pointer; border:none; background:none; color:inherit;}
   <h1>🏝️ 버킷섬</h1>
   <div class="isle">🏝️</div>
   <p class="desc">섬 곳곳의 <b>도전 과제</b>를 해결하고 여름 활동 카드를 모아<br>
-  나만의 <b>방학 달력</b>을 완성해 보세요! 계획을 세워 섬을 꾸며요. ✨</p>
+  나만의 <b>방학 달력</b>을 완성해 보세요! 계획을 세워 섬을 꾸며요✨</p>
   <div class="setup-box">
     <div class="setup-row">
       <label>👤 탐험가 이름</label>
